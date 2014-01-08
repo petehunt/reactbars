@@ -18,6 +18,7 @@ describe('HTMLtoJSX', function() {
         html: "<html><body></body></html>",
         scripts: [],
         done: function (err, window) {
+          expect(!!err).toBe(false);
           var converter = new HTMLtoJSX(window.document, {
             createClass: false
           });
