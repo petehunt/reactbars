@@ -48,7 +48,7 @@ describe('ReactBars', function() {
     });
   });
 
-  it('can do its job', function() {
+  it('can do a basic compile', function() {
     var done = false;
 
     runs(function() {
