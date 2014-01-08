@@ -85,6 +85,10 @@ describe('ReactBars', function() {
         '<h1>{{#unless abcd}}hello{{/unless}} sup</h1>',
         '<h1>{ ((this.props.abcd) ? null : <span>hello</span>) } sup</h1>\n'
       ],
+      [
+        '<h1>{{log "test test"}}</h1>',
+        '<h1>{console.log("test test")}</h1>\n'
+      ]
     ];
 
     runs(function() {
