@@ -73,8 +73,19 @@ describe('ReactBars', function() {
     });
   });
 
-  it('can handle ifs', function() {
+  it('can handle special blocks', function() {
     var done = false;
+
+    var cases = [
+      [
+        '<h1>{{#if abcd}}hello{{else}}goodbye{{/if}} sup</h1>',
+        '<h1>{ ((this.props.abcd) ? <span>hello</span> : <span>goodbye</span>) } sup</h1>\n'
+      ],
+      [
+        '<h1>{{#unless abcd}}hello{{/unless}} sup</h1>',
+        '<h1>{ ((this.props.abcd) ? null : <span>hello</span>) } sup</h1>\n'
+      ],
+    ];
 
     runs(function() {
       jsdom.env({
@@ -83,9 +94,9 @@ describe('ReactBars', function() {
         done: function (err, window) {
           expect(!!err).toBe(false);
           try {
-            expect(ReactBars.rewriteHandlebars(window.document, '<h1>{{#if abcd}}hello{{else}}goodbye{{/if}} sup</h1>')).toBe(
-              '<h1>{ ((this.props.abcd) ? <span>hello</span> : <span>goodbye</span>) } sup</h1>\n'
-            );
+            cases.forEach(function(item) {
+              expect(ReactBars.rewriteHandlebars(window.document, item[0])).toBe(item[1]);
+            });
           } catch (e) {
             console.error(e);
           }
