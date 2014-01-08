@@ -1,7 +1,7 @@
 var jsdom = require('jsdom');
 var ReactBars = require('../lib/ReactBars');
 
-var HBS_EXAMPLE = '<ul class="wat">{{#posts}}<li>{{{link_to}}}</li>{{/posts}}</ul>';
+var HBS_EXAMPLE = '<ul class="wat">{{#yolo posts}}<li>{{{link_to}}}</li>{{/yolo}}</ul>';
 
 describe('ReactBars', function() {
   it('can convert hbs to jsx without dying completely', function() {
@@ -14,7 +14,7 @@ describe('ReactBars', function() {
         done: function (err, window) {
           expect(!!err).toBe(false);
           expect(ReactBars.convertToJSX(window.document, HBS_EXAMPLE)).toBe(
-            '<ul className="wat">{{#posts}}<li>{{{link_to}}}</li>{{/posts}}</ul>\n'
+            '<ul className="wat">{{#yolo posts}}<li>{{{link_to}}}</li>{{/yolo}}</ul>\n'
           );
 
           done = true;
@@ -58,7 +58,7 @@ describe('ReactBars', function() {
           expect(!!err).toBe(false);
           try {
             expect(ReactBars.rewriteHandlebars(window.document, HBS_EXAMPLE)).toBe(
-              '<ul className="wat"><posts><li>{this.props.link_to}</li></posts></ul>\n'
+              '<ul className="wat"><yolo params={[this.props.posts]}><li>{this.props.link_to}</li></yolo></ul>\n'
             );
           } catch (e) {
             console.error(e);
