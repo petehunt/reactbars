@@ -93,6 +93,10 @@ describe('ReactBars', function() {
       [
         '<h1>{{#with jonx}} {{asdf}} {{/with}}</h1>',
         '<h1>{ (function() { with (jonx) { return (<span> {asdf} </span>); }}).call(this) }</h1>\n'
+      ],
+      [
+        '<h1>{{#each asdf}} {{item}} {{/each}}</h1>',
+        '<h1>{ (asdf).map(function(item) { with (item) { return (<span> {item} </span>); } }) }</h1>\n'
       ]
     ];
 
