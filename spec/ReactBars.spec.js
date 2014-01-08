@@ -1,5 +1,6 @@
 var jsdom = require('jsdom');
 var ReactBars = require('../lib/ReactBars');
+var transform = require('react-tools').transform;
 
 var HBS_EXAMPLE = '<ul class="wat">{{#yolo posts}}<li>{{{link_to}}}</li>{{/yolo}}</ul>';
 
@@ -58,7 +59,7 @@ describe('ReactBars', function() {
           expect(!!err).toBe(false);
           try {
             expect(ReactBars.rewriteHandlebars(window.document, HBS_EXAMPLE)).toBe(
-              '<ul className="wat"><yolo params={[this.props.posts]}><li>{this.props.link_to}</li></yolo></ul>\n'
+              '<ul className="wat"><yolo params={[posts]}><li>{link_to}</li></yolo></ul>\n'
             );
           } catch (e) {
             console.error(e);
@@ -79,15 +80,19 @@ describe('ReactBars', function() {
     var cases = [
       [
         '<h1>{{#if abcd}}hello{{else}}goodbye{{/if}} sup</h1>',
-        '<h1>{ ((this.props.abcd) ? <span>hello</span> : <span>goodbye</span>) } sup</h1>\n'
+        '<h1>{ ((abcd) ? <span>hello</span> : <span>goodbye</span>) } sup</h1>\n'
       ],
       [
         '<h1>{{#unless abcd}}hello{{/unless}} sup</h1>',
-        '<h1>{ ((this.props.abcd) ? null : <span>hello</span>) } sup</h1>\n'
+        '<h1>{ ((abcd) ? null : <span>hello</span>) } sup</h1>\n'
       ],
       [
         '<h1>{{log "test test"}}</h1>',
         '<h1>{console.log("test test")}</h1>\n'
+      ],
+      [
+        '<h1>{{#with jonx}} {{asdf}} {{/with}}</h1>',
+        '<h1>{ (function() { with (jonx) { return (<span> {asdf} </span>); }}).call(this) }</h1>\n'
       ]
     ];
 
@@ -100,6 +105,7 @@ describe('ReactBars', function() {
           try {
             cases.forEach(function(item) {
               expect(ReactBars.rewriteHandlebars(window.document, item[0])).toBe(item[1]);
+              expect(transform.bind(null, '/** @jsx React.DOM */ ' + item[1])).not.toThrow();
             });
           } catch (e) {
             console.error(e);
