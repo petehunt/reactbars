@@ -1,3 +1,4 @@
+var jsdom = require('jsdom');
 var HTMLtoJSX = require('../lib/HTMLtoJSX');
 
 describe('HTMLtoJSX', function() {
@@ -10,9 +11,34 @@ describe('HTMLtoJSX', function() {
 </div>\n\
 <p>Enter your HTML here</p>\
 ";
-    var converter = new HTMLtoJSX({
-      createClass: false
+    var done = false;
+
+    runs(function() {
+      jsdom.env({
+        html: "<html><body></body></html>",
+        scripts: [],
+        done: function (err, window) {
+          var converter = new HTMLtoJSX(window.document, {
+            createClass: false
+          });
+          expect(converter.convert(HELLO_COMPONENT)).toBe(
+'<div>\n\
+        {/* Hello world */}\n\
+        <div className="awesome" style={{border: \'1px solid red\'}}>\n\
+          <label htmlFor="name">Enter your name: </label>\n\
+          <input type="text" id="name" />\n\
+        </div>\n\
+        <p>Enter your HTML here</p>\n\
+      </div>\n\
+'
+          );
+          done = true;
+        }
+      });
     });
-    expect(converter.convert(HELLO_COMPONENT)).toBe('');
+
+    waitsFor(function() {
+      return done;
+    });
   });
 });
